@@ -88,3 +88,6 @@ messages (collection)
     - userEmail: string (user email)
     - userId: string (user ID)
 ```
+
+## Live Link:
+(https://deepnet-chat.netlify.app/)
