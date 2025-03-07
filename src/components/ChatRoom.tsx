@@ -35,6 +35,7 @@ export function ChatRoom() {
   const [sending, setSending] = useState(false);
   const { currentUser, logout } = useAuth();
   const bottomRef = useRef<HTMLDivElement>(null);
+  const messageBeingSent = useRef<string>("");
 
   useEffect(() => {
     if (!currentUser) return;
@@ -67,18 +68,25 @@ export function ChatRoom() {
     if (!newMessage.trim() || !currentUser) return;
 
     setSending(true);
+    messageBeingSent.current = newMessage;
+    setNewMessage("");
 
     try {
+      // Wait for the message to be fully sent to Firestore
       await addDoc(collection(db, "messages"), {
-        text: newMessage,
+        text: messageBeingSent.current,
         createdAt: serverTimestamp(),
         userId: currentUser.uid,
         userEmail: currentUser.email,
       });
-
-      setNewMessage("");
+      
+      // Clear the message being sent
+      messageBeingSent.current = "";
     } catch (error) {
       console.error("Error sending message: ", error);
+      // Return the failed message to the input box
+      setNewMessage(messageBeingSent.current);
+      messageBeingSent.current = "";
     } finally {
       setSending(false);
     }
@@ -87,6 +95,16 @@ export function ChatRoom() {
   const formatDate = (date: Date) => {
     return formatRelative(date, new Date());
   };
+
+  // Filter out messages that match what we're currently sending
+  const displayMessages = messages.filter(
+    (message) => 
+      !(
+        sending && 
+        message.userId === currentUser?.uid && 
+        message.text === messageBeingSent.current
+      )
+  );
 
   return (
     <Card className="w-full max-w-7xl mx-auto h-[calc(100vh-40px)]">
@@ -105,12 +123,12 @@ export function ChatRoom() {
           <div className="flex items-center justify-center h-full">
             <p>Loading messages...</p>
           </div>
-        ) : messages.length === 0 ? (
+        ) : displayMessages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
             <p>No messages yet. Start the conversation!</p>
           </div>
         ) : (
-          messages.map((message) => (
+          displayMessages.map((message) => (
             <div
               key={message.id}
               className={`flex flex-col ${
