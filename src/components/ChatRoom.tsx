@@ -90,7 +90,7 @@ export function ChatRoom() {
 
   return (
     <Card className="w-full max-w-7xl mx-auto h-[calc(100vh-40px)]">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-center justify-between border-b py-2">
         <CardTitle className="font-extrabold text-3xl">Realtime Chat</CardTitle>
         <Button
           onClick={logout}
@@ -100,7 +100,7 @@ export function ChatRoom() {
         </Button>
       </CardHeader>
 
-      <CardContent className="flex flex-col space-y-4 h-[calc(100%-160px)] overflow-y-auto pb-0">
+      <CardContent className="custom-scrollbar flex flex-col space-y-4 h-[calc(100%-160px)] overflow-y-auto pb-0">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <p>Loading messages...</p>

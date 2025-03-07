@@ -1,6 +1,7 @@
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AuthForm } from "./components/AuthForm";
 import { ChatRoom } from "./components/ChatRoom";
+import "./App.css"
 
 function AppContent() {
   const { currentUser } = useAuth();
